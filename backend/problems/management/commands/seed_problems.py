@@ -427,6 +427,20 @@ class Command(BaseCommand):
             else:
                 updated_count += 1
 
+        # Ensure demo user exists for interviewers/testers
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        if not User.objects.filter(username='coder').exists():
+            User.objects.create_user(
+                username='coder',
+                password='coder123',
+                email='coder@example.com',
+                codeforces_handle='tourist',
+                codechef_handle='gennady',
+                atcoder_handle='tourist'
+            )
+            self.stdout.write(self.style.SUCCESS("Demo user 'coder' created (password: coder123)."))
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"Successfully seeded problems! Created: {created_count}, Updated: {updated_count}. Total in DB: {Problem.objects.count()}"
